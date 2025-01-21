@@ -1,0 +1,119 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="com.project.DBConnect" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="jakarta.servlet.http.*" %>
+<%@ page import="java.net.URLDecoder" %>
+
+
+<%
+
+Cookie[] cookies = request.getCookies();
+int t=0;
+int userid = 0;
+String name =null;
+
+if(cookies != null){
+	
+	for(Cookie cookie : cookies){
+		if(cookie.getName().equals("blogitid")){
+			t=1;
+			userid = Integer.parseInt(cookie.getValue());
+		}else if(cookie.getName().equals("name")){
+			name = URLDecoder.decode(cookie.getValue(), "UTF-8");
+		}
+	}
+}
+
+if(t==0){
+	response.sendRedirect("Login.jsp");
+}
+
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>BlogIt - <%= name %></title>
+<style>
+body{
+margin:0;
+padding:0;
+background-color:#A9A9A9;
+}
+.post{
+padding:5px 0 15px 15px;
+width:100%;
+height:150px;
+background-color:#A9A9A9;
+display:grid;
+grid-template-columns: 1fr 1fr 2fr 3fr 1fr;
+align-items:center;
+border-bottom: 2px solid black;
+}
+.active{
+	text-decoration:none;
+	text-decoration:underline;
+	color:grey;
+	font-weight:900;
+}
+</style>
+<link rel="stylesheet" href="active.css">
+</head>
+<body>
+
+<nav style="background-color:white; user-select:none; display:flex; justify-content:space-between; align-items:center; width:100%; height:15vh;">
+<a href="index.jsp" style="width:100%"><img src="images/logo.png" alt="BlogIt-logo" style="width:10%;"></a>
+<div style=" width:40%; display:flex; justify-content:space-evenly; align-items:center;">
+<h2><a style="color:black;" href="index.jsp">home</a></h2>
+<h2 class="active"><a style="color:grey;" href="Posts.jsp">posts</a></h2>
+<h2><a style="color:black;" href="CreatePost.jsp">new</a></h2>
+<h2><a style="color:black;" href="Account.jsp">accounts</a></h2>
+<h2><a style="color:black;" href="LogoutAction.jsp">logout</a></h2>
+</div>
+</nav>
+
+
+<%
+
+Connection con = DBConnect.Connect();
+String sql = "Select * from posts where userid = ?";
+
+PreparedStatement ps = con.prepareStatement(sql);
+ps.setInt(1,userid);
+
+ResultSet rs = ps.executeQuery();
+
+
+if (!rs.isBeforeFirst()) { 
+%>
+    <div class="no-posts" style="text-align:center; font-size:1.5rem; margin-top:20px; font-weight:600;">
+        No posts made.
+    </div>
+<%
+} else {
+
+while(rs.next()){
+%>
+<div class="posts" style="width:100%; overflow:hidden;">
+
+<div class="post">
+<div class="read-more" style="font-weight:bold;"><span style="font-weight:normal;">By-</span> <br><%= rs.getString("author") %></div>
+<div class="topic"><%= rs.getString("topic1") %>, <%= rs.getString("topic2") %>, <%= rs.getString("topic3") %></div>
+<div class="title" style="font-size:2rem; font-weight:bold;"><%= rs.getString("title") %></div>
+<div class="content" style="padding:20px"><%= rs.getString("content") %></div>
+<div class="date" style="padding-left:10px;"><%= rs.getDate("date") %></div>
+</div>
+
+</div>
+<%	
+	
+}
+}
+
+%>
+
+
+
+</body>
+</html>
