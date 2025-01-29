@@ -101,3 +101,19 @@ Follow these steps to set up Tomcat and run your JSP project:
 The JSP project should now be running on your Tomcat server.
 
 
+---
+
+## Screenshots
+
+
+![image info](./screenshots/login-page.png)
+
+![image info](./screenshots/signup-page.png)
+
+![image info](./screenshots/home-page-logged.png)
+
+![image info](./screenshots/home-page-logged-out.png)
+
+![image info](./screenshots/new-post.png)
+
+![image info](./screenshots/accounts-page.png)
